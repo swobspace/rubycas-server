@@ -12,6 +12,11 @@ class CASServer::Authenticators::ActiveDirectoryLDAP < CASServer::Authenticators
     if @extra_attributes["objectGUID"]
       @extra_attributes["guid"] = @extra_attributes["objectGUID"].to_s.unpack("H*").to_s
     end
+    if @extra_attributes["memberof"]
+      @extra_attributes["groups"] = @extra_attributes["memberof"].map {|g| 
+                                      g.sub(/.*?CN=(.*?),.*/, '\1')
+                                    }
+    end
     ldap_entry
   end
 end
